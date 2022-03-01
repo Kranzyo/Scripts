@@ -53,7 +53,7 @@ if game:GetService("CoreGui"):FindFirstChild("FinityUI") then
 end
 local Finity = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/UI-Librarys/main/Finity%20UI%20Lib"))()
 local FinityWindow = Finity.new(true)
-FinityWindow.ChangeToggleKey(Enum.KeyCode.Semicolon)
+FinityWindow.ChangeToggleKey(Enum.KeyCode.Comma)
 
 -- // Credits and stuff
 local CreditsCategory = FinityWindow:Category("Credits and stuff")
@@ -131,6 +131,21 @@ function(v)
             end
 
                 repeat task.wait() until OnFarm
+            
+        elseif farmMethod == "Item Farm" then
+            for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
+                if v.Name == "SpawnLocation" then
+                    root.CFrame = v.CFrame
+                end
+            end
+
+            for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
+                if v:FindFirstChild("Interaction") then
+                    fireproximityprompt(v.Interaction, 1, true)
+                end
+            end
+
+            repeat task.wait() until OnFarm
         end
     end
 end)
