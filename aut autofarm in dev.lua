@@ -135,17 +135,26 @@ function(v)
         elseif farmMethod == "Item Farm" then
             for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
                 if v.Name == "SpawnLocation" then
+                    if #v:GetChildren() > 0 then
+                        root.CFrame = v:GetChildren()[1].CFrame
+                    end
+                end
+            end
+--[[
+    for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
+                if v.Name == "SpawnLocation" then
                     root.CFrame = v.CFrame
                 end
             end
-
+]]
             for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
                 if v:FindFirstChild("Interaction") then
                     fireproximityprompt(v.Interaction, 1, true)
                 end
             end
 
-            repeat task.wait() until OnFarm
+            
+                repeat task.wait() until OnFarm
         end
     end
 end)
