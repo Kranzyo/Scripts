@@ -71,7 +71,6 @@ local farms = autofarm:Sector("Farms")
 farms:Cheat("Dropdown", "Select Farm Method", 
 function(s)
     getgenv().farmMethod = s
-    print(farmMethod)
 end,
 {
 options = itemFarms
@@ -80,7 +79,6 @@ options = itemFarms
 farms:Cheat("Checkbox", "Farm Selected", 
 function(v)
     getgenv().OnFarm = v
-    print("toggle state is", OnFarm)
 
     -- // tp
     while OnFarm do
@@ -89,7 +87,6 @@ function(v)
         if farmMethod == "Meteor Farm" then
             for i,v in pairs(game:GetService("Workspace").ItemSpawns.Meteors:GetDescendants()) do
                 if v.Name == "Meteor" then
-                    -- print("Teleporting to meteor")
                     root.CFrame = v.CFrame + Vector3.new(0,7,0)
                 end
             end
@@ -97,7 +94,6 @@ function(v)
             -- // collection
             for i,v in pairs(game:GetService("Workspace").ItemSpawns.Meteors:GetDescendants()) do
                 if v:FindFirstChild("Interaction") then
-                    -- print("collecting meteor")
                     fireproximityprompt(v.Interaction, 1, true)
                 end
             end
@@ -108,7 +104,6 @@ function(v)
         elseif farmMethod == "Chest Farm" then
             for i,v in pairs(game:GetService("Workspace").ItemSpawns.Chests:GetDescendants()) do
                 if v.Name == "RootPart" then
-                    -- print("tping to chest")
                     root.CFrame = v.CFrame + Vector3.new(0,7,0)
                 end
             end
@@ -116,7 +111,6 @@ function(v)
             -- // collection
             for i,v in pairs(game:GetService("Workspace").ItemSpawns.Chests:GetDescendants()) do
                 if v:FindFirstChild("Interaction") then
-                   -- print("interacting with chest")
                     fireproximityprompt(v.Interaction, 1, true)
                 end
             end
@@ -126,14 +120,12 @@ function(v)
         elseif farmMethod == "Sand Debris Farm" then
             for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
                 if v.Name == "SandDebris" then
-                    -- print("sand tp")
                     root.CFrame = v.CFrame + Vector3.new(0,0,5)
                 end
             end
 
             for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
                 if v:FindFirstChild("Interaction") then
-                    -- print("sand prompt")
                     fireproximityprompt(v.Interaction, 1, true)
                 end
             end
@@ -154,7 +146,6 @@ SpeednJump:Cheat("Slider", "Jump Power", function(s)
 end, {min = 50, max = 250, suffix = " Jump Power"})
 SpeednJump:Cheat("Checkbox", "Start Walk/jump power", function(s)
     yes = s
-   -- print("state for start walk is", yes)
     while yes do task.wait()
         hum.WalkSpeed = Speed
         hum.JumpPower = Jump
@@ -163,7 +154,7 @@ end)
 -- // Settings
 local Settings = FinityWindow:Category("Settings")
 local ChangeToggleKey = Settings:Sector("Change Toggle")
-ChangeToggleKey:Cheat("Dropdown", "ChangeToggleKey", 
+ChangeToggleKey:Cheat("Dropdown", "Change Toggle Key", 
 function(s)
     FinityWindow.ChangeToggleKey(Enum.KeyCode[s])
 end,
