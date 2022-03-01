@@ -26,8 +26,8 @@ end
 local itemFarms = {
     "Meteor Farm",
     "Chest Farm",
-    "Item Farm",
-    "Dio Farm"
+    "Sand Debris Farm",
+    "Item Farm"
 }
 
 local lp = game:GetService("Players").LocalPlayer
@@ -115,6 +115,21 @@ function(v)
 
             -- // collection
             for i,v in pairs(game:GetService("Workspace").ItemSpawns.Chests:GetDescendants()) do
+                if v:FindFirstChild("Interaction") then
+                    fireproximityprompt(v.Interaction, 1, true)
+                end
+            end
+
+                repeat task.wait() until OnFarm
+
+        elseif farmMethod == "Sand Debris Farm" then
+            for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
+                if v.Name == "SandDebris" then
+                    root.CFrame = v.CFrame + Vector3.new(0,0,5)
+                end
+            end
+
+            for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
                 if v:FindFirstChild("Interaction") then
                     fireproximityprompt(v.Interaction, 1, true)
                 end
