@@ -143,7 +143,8 @@ function(v)
                     end
                 end
             end
---[[
+        
+--[[ previous stuff
     for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
                 if v.Name == "SpawnLocation" then
                     root.CFrame = v.CFrame
@@ -181,6 +182,8 @@ SpeednJump:Cheat("Checkbox", "Start Walk/jump power", function(s)
         hum.JumpPower = Jump
     end
 end)
+
+-- // god mode
 godMode:Cheat("Button", "God Mode button", function()
     game:GetService("Players").LocalPlayer.Character.Values.Block:Destroy()
 end)
@@ -196,10 +199,13 @@ end,
 {
 options = EnumKeys
 })
+
+-- // delete gui button
 local deletegui = Settings:Sector("Deletegui")
 deletegui:Cheat("Button", "Delete GUI", function()
     game.CoreGui.FinityUI:Destroy()
 end)
+
 -- // Examples?
 
 --[[
