@@ -36,6 +36,8 @@ local hum = char.Humanoid
 local root = char:FindFirstChild("HumanoidRootPart")
  
 local desc = [[
+
+    A Universal time autofarm
     **USE AT YOUR OWN RISK**
 ]]
 local EnumKeys = {'Semicolon','Tab','Equals','Comma','Minus','Period','F1',"F2","F3","F4",'F5',"F6","F7",
@@ -63,7 +65,8 @@ local description = CreditsCategory:Sector("Description:")
 uiCreator:Cheat("Label", "Detourious @ v3rmillion.net") 
 scriptCreator:Cheat("Label", "KayD @ v3rmillion.net")
 description:Cheat("Label", desc)
-
+local Notes = CreditsCategory:Sector("NOTE:")
+Notes:Cheat("Label", "Re execute if anything it doesn't work")
 -- // main
 local autofarm = FinityWindow:Category("Autofarm")
 local farms = autofarm:Sector("Farms")
@@ -162,6 +165,8 @@ end)
 -- // Misc
 local misc = FinityWindow:Category("Misc")
 local SpeednJump = misc:Sector("Speed & Jump")
+
+-- // Walk speed and Jump power changer
 SpeednJump:Cheat("Slider", "Walk Speed", function(s)
     getgenv().Speed = s
 end, {min = 16, max = 250, suffix = " Walk Speed"})
@@ -175,6 +180,9 @@ SpeednJump:Cheat("Checkbox", "Start Walk/jump power", function(s)
         hum.JumpPower = Jump
     end
 end)
+
+
+
 -- // Settings
 local Settings = FinityWindow:Category("Settings")
 local ChangeToggleKey = Settings:Sector("Change Toggle")
@@ -185,7 +193,10 @@ end,
 {
 options = EnumKeys
 })
-
+local deletegui = Settings:Sector("Deletegui")
+deletegui:Cheat("Button", "Delete GUI", function()
+    game.CoreGui.FinityUI:Destroy()
+end)
 -- // Examples?
 
 --[[
