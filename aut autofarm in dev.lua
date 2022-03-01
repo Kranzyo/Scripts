@@ -165,6 +165,7 @@ end)
 -- // Misc
 local misc = FinityWindow:Category("Misc")
 local SpeednJump = misc:Sector("Speed & Jump")
+local godMode = misc:Sector("God Mode")
 
 -- // Walk speed and Jump power changer
 SpeednJump:Cheat("Slider", "Walk Speed", function(s)
@@ -180,7 +181,9 @@ SpeednJump:Cheat("Checkbox", "Start Walk/jump power", function(s)
         hum.JumpPower = Jump
     end
 end)
-
+godMode:Cheat("Button", "God Mode button", function()
+    game:GetService("Players").LocalPlayer.Character.Values.Block:Destroy()
+end)
 
 
 -- // Settings
