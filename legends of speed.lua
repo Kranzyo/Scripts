@@ -123,6 +123,18 @@ local function rebirth()
     end)
 end
 
+local function tp()
+    if city == "Main City" then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-9682.98828, 74.8522873, 3099.03394, 0.087131381, 0, 0.996196866, 0, 1, 0, -0.996196866, 0, 0.087131381)
+    elseif city == "Snow City" then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-9676.13867, 74.8522873, 3782.69385, 0, 0, -1, 0, 1, 0, 1, 0, 0)
+    elseif city == "Magma City" then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-11054.9688, 232.791656, 4898.62842, -0.0872479677, 0.000158954252, -0.996186614, -0.00054083002, 0.999999821, 0.00020692969, 0.996186495, 0.000556821818, -0.0872478485)
+    elseif city == "Legends Highway" then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13098.8711, 232.791656, 5907.62793, -0.0872479677, 0.000158954252, -0.996186614, -0.00054083002, 0.999999821, 0.00020692969, 0.996186495, 0.000556821818, -0.0872478485)
+    end
+end
+
 -- // anti afk
 for i,v in pairs(getconnections(lp.Idled)) do
 	v:Disable()
@@ -192,6 +204,19 @@ autosector:Cheat("Checkbox", "Autofarm", function(v)
     end
 end)
 
+autosector:Cheat("Checkbox", "Autofarm all", function(v)
+    autofarm = v
+    print("auto state is", autofarm)
+    if autofarm then
+        for i,v in pairs(game:GetService("Workspace").orbFolder:GetDescendants()) do
+            if v.Name == "TouchInterest" and v.Parent then
+                firetouchinterest(char.Head , v.Parent, 0)
+            end
+        end
+        Hoops()
+    end
+end)
+autosector:Cheat("Label", "Note: You farm what you have selected in the dropdown")
 
 
 -- // rebirth toggle
@@ -201,6 +226,22 @@ autosector:Cheat("Checkbox", "Rebirth toggle", function(v)
         rebirth()
     end
 end)
+
+
+--// teleports
+
+local teleport = FinityWindow:Category("Teleports")
+local CitesTp = teleport:Sector("Cities")
+
+CitesTp:Cheat("Dropdown", "Cities", function(v)
+    tpTo = v
+
+    if tpTo == "Main City" then
+        tp(root.CFrame, )
+    end
+end, {
+    options = cities
+})
 
 -- // speed/ jump
 local misc = FinityWindow:Category("Misc")
@@ -235,7 +276,7 @@ end)
 local Settings = FinityWindow:Category("Settings")
 local ChangeToggleKey = Settings:Sector("Change Toggle")
 
-local delete = Settings:Sector("Delete gui")
+local delete = Settings:Sector("Deletion")
 
 ChangeToggleKey:Cheat("Dropdown", "Change Toggle Key", 
 function(Option)
