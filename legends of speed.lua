@@ -32,6 +32,7 @@ getgenv().selectcity = false
     end
 ]]--
 local desc = [[
+    has anti afk btw
     **USE AT YOUR OWN RISK**
 ]]
 local EnumKeys = {'Semicolon','Tab','Equals','Comma','Minus','Period','F1',"F2","F3","F4",'F5',"F6","F7",
@@ -102,7 +103,6 @@ local function Hoops()
     spawn(function()
         while task.wait() do
             if not autofarm then break end
-
             for i, v in pairs(game:GetService("Workspace").Hoops:GetDescendants()) do
                 if v.Name == "TouchInterest" then
                     firetouchinterest(char.Head, v.Parent, 0)
@@ -153,22 +153,7 @@ description:Cheat("Label", desc)
 -- // Main stuff
 local autos = FinityWindow:Category("Autos")
 local autosector = autos:Sector("Farms")
-autosector:Cheat("Checkbox", "Autofarm", function(v)
-    autofarm = v
-    print("auto state is", autofarm)
-    if autofarm then
-        if selectcity == "Main City" then
-            City()
-        elseif selectcity == "Snow City" then
-            Snow()
-        elseif selectcity == "Magma City" then
-            Magma()
-        elseif selectcity == "Legends Highway" then
-            LegendsHighway()
-        end
-        Hoops()
-    end
-end)
+
 autosector:Cheat("Dropdown", "Select City", function(v)
     selectcity = v
     print("city selection is", selectcity)
@@ -189,6 +174,24 @@ autosector:Cheat("Dropdown", "Select City", function(v)
 end, {
     options = cities
 })
+
+autosector:Cheat("Checkbox", "Autofarm", function(v)
+    autofarm = v
+    print("auto state is", autofarm)
+    if autofarm then
+        if selectcity == "Main City" then
+            City()
+        elseif selectcity == "Snow City" then
+            Snow()
+        elseif selectcity == "Magma City" then
+            Magma()
+        elseif selectcity == "Legends Highway" then
+            LegendsHighway()
+        end
+        Hoops()
+    end
+end)
+
 
 
 -- // rebirth toggle
@@ -232,6 +235,8 @@ end)
 local Settings = FinityWindow:Category("Settings")
 local ChangeToggleKey = Settings:Sector("Change Toggle")
 
+local delete = Settings:Sector("Delete gui")
+
 ChangeToggleKey:Cheat("Dropdown", "Change Toggle Key", 
 function(Option)
     FinityWindow.ChangeToggleKey(Enum.KeyCode[Option])
@@ -240,14 +245,9 @@ end,
 options = EnumKeys
 })
 
-
-
-
-
-
-
-
-
+delete:Cheat("Button", "Delete GUI", function()
+    game.CoreGui.FinityUI:Destroy()
+end)
 
 
 --Examples?
