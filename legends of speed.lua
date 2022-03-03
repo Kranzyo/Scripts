@@ -1,4 +1,4 @@
---Game:
+--Game: Legends Of speed
 
 -- docs : https://detourious.gitbook.io/project-finity/docs
 local lp = game:GetService("Players").LocalPlayer
@@ -32,6 +32,7 @@ getgenv().selectcity = false
     end
 ]]--
 local desc = [[
+
     has anti afk btw
     **USE AT YOUR OWN RISK**
 ]]
@@ -123,7 +124,7 @@ local function rebirth()
     end)
 end
 
-local function tp()
+local function tp(city)
     if city == "Main City" then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-9682.98828, 74.8522873, 3099.03394, 0.087131381, 0, 0.996196866, 0, 1, 0, -0.996196866, 0, 0.087131381)
     elseif city == "Snow City" then
@@ -204,18 +205,7 @@ autosector:Cheat("Checkbox", "Autofarm", function(v)
     end
 end)
 
-autosector:Cheat("Checkbox", "Autofarm all", function(v)
-    autofarm = v
-    print("auto state is", autofarm)
-    if autofarm then
-        for i,v in pairs(game:GetService("Workspace").orbFolder:GetDescendants()) do
-            if v.Name == "TouchInterest" and v.Parent then
-                firetouchinterest(char.Head , v.Parent, 0)
-            end
-        end
-        Hoops()
-    end
-end)
+
 autosector:Cheat("Label", "Note: You farm what you have selected in the dropdown")
 
 
@@ -237,7 +227,15 @@ CitesTp:Cheat("Dropdown", "Cities", function(v)
     tpTo = v
 
     if tpTo == "Main City" then
-        tp(root.CFrame, )
+        tp("Main City")
+    elseif tpTo == "Snow City" then
+    	tp("Snow City")
+    	
+    elseif tpTo == "Magma City" then
+    	tp("Magma City")
+    	
+    elseif tpTo == "Legends Highway" then
+    	tp("Legends Highway")
     end
 end, {
     options = cities
@@ -290,50 +288,3 @@ delete:Cheat("Button", "Delete GUI", function()
     game.CoreGui.FinityUI:Destroy()
 end)
 
-
---Examples?
-
---[[
-    S1:Cheat("Slider", "Render Distance", function(v)--Slider
-    print("Silder value changed:", v)
-    end, {min = 0, max = 1500, suffix = " studs"})
-    
-    
-    S1:Cheat("Dropdown", "ESP Color", function(Option) --Dropdowns
-    print("Dropdown option changed:", Option)
-    end, {
-    options = {
-    "Red",
-    "White",
-    "Green",
-    "Pink",
-    "Blue"
-    }
-    })
-    
-    
-    S1:Cheat("Textbox", "Item To Whitelist", function(v) --Textbox
-    print("Textbox value changed:", v)
-    end, {
-    placeholder = "Item Name"
-    })
-    
-    
-    S1:Cheat("Button", "Reset Whitelist", function() --Button
-    print("Button pressed")
-    end)
-    
-    
-    S1:Cheat("Checkbox","Name",
-    function(State)
-        if not State then
-            _G.on = 0
-        else
-            _G.on = 1
-        end
-        while _G.on == 1 do
-            game:GetService('RunService').Stepped:wait()
-        end
-    end
-    )
-    ]]
