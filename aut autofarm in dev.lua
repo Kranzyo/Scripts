@@ -22,6 +22,7 @@ local function fireproximityprompt(Obj, Amount, Skip)
         error("userdata<ProximityPrompt> expected")
     end
 end
+
 getgenv().Config = {
 
     itemFarms = {
@@ -36,8 +37,19 @@ getgenv().Config = {
         Jump = 50
     },
 
-    farmMethod = nil,
+    farmMethod = "",
     OnFarm = false,
+    GodMode = false,
+    dioOn = false,
+    e = false,
+    r = false,
+    t = false,
+    y = false,
+    f = false,
+    g = false,
+    h = false,
+    j = false,
+    b = false,
 
     desc = [[
         
@@ -46,11 +58,18 @@ getgenv().Config = {
 }
 
 
-
+-- // variables
 local lp = game:GetService("Players").LocalPlayer
-local char = lp.Character
+local char = lp.Character or lp.CharacterAdded:Wait()
 local hum = char:WaitForChild("Humanoid")
-local root = hum:WaitForChild("HumanoidRootPart")
+local root = char:WaitForChild("HumanoidRootPart")
+
+-- // getting the char when ded
+lp.CharacterAdded:Connect(function(Character)
+    char = Character
+    hum = Character:WaitForChild("Humanoid")
+    root = Character:WaitForChild("HumanoidRootPart")
+end)
 
 local EnumKeys = {'Semicolon','Tab','Equals','Comma','Minus','Period','F1',"F2","F3","F4",'F5',"F6","F7",
     "F8","F9","F10","F11","F12",'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H',
@@ -63,11 +82,12 @@ for i,v in pairs(getconnections(lp.Idled)) do
 end
 
 
---[[// functions
+
+--[[ functions
 local function meteorFarm()
     task.spawn(function()
         while task.wait() do
-            if Config.Config.farmMethod == "Meteor Farm" then
+            if Config.farmMethod == "Meteor Farm" then
                 if lp.Character then
                     for i,v in pairs(game:GetService("Workspace").ItemSpawns.Meteors:GetDescendants()) do
                             if v.Name == "Meteor" then
@@ -91,7 +111,7 @@ end
 local function chestFarm()
     task.spawn(function()
         while task.wait() do
-            if Config.Config.farmMethod == "Chest Farm" then
+            if Config.farmMethod == "Chest Farm" then
                 if lp.Character then
                     for i,v in pairs(game:GetService("Workspace").ItemSpawns.Chests:GetDescendants()) do
                         if v.Name == "RootPart" then
@@ -114,7 +134,7 @@ end
 local function sandDebrisFarm()
     task.spawn(function()
         while task.wait() do
-            if Config.Config.farmMethod == "Sand Debris Farm" then
+            if Config.farmMethod == "Sand Debris Farm" then
                 if lp.Character then
                     print("Sand farming...")
                     for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
@@ -137,7 +157,7 @@ end
 local function itemFarm()
     task.spawn(function()
         while task.wait() do
-            if Config.Config.farmMethod == "Item Farm" then
+            if Config.farmMethod == "Item Farm" then
                 if lp.Character then
                     for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
                         if v.Name == "SpawnLocation" then
@@ -174,21 +194,21 @@ local description = CreditsCategory:Sector("Description:")
 uiCreator:Cheat("Label", "Detourious @ v3rmillion.net") 
 scriptCreator:Cheat("Label", "KayD @ v3rmillion.net")
 description:Cheat("Label", Config.desc)
-local Notes = CreditsCategory:Sector("NOTE:")
-Notes:Cheat("Label", "Re execute if anything doesn't work")
 
 -- // main
 local autofarm = FinityWindow:Category("Autofarm")
 local farms = autofarm:Sector("Farms")
+local other = autofarm:Sector("Other")
 -- // Dropdown to select method
 farms:Cheat("Dropdown", "Select Farm Method", 
 function(s)
-    Config.Config.farmMethod = s
-    print("Selected", Config.Config.farmMethod)
+    Config.farmMethod = s
+    print("Selected", Config.farmMethod)
 end,
 {
 options = Config.itemFarms
 })
+
 -- // farm
 farms:Cheat("Checkbox", "Farm Selected", 
 function(v)
@@ -196,9 +216,9 @@ function(v)
 
     while Config.OnFarm do
         if Config.farmMethod == "Meteor Farm" then
-            print("Meteor farming...")
-            for i,v in pairs(game:GetService("Workspace").ItemSpawns.Meteors:GetDescendants()) do
-                if lp.Character then
+            if char then
+                print("Meteor farming...", Config.OnFarm)
+                for i,v in pairs(game:GetService("Workspace").ItemSpawns.Meteors:GetDescendants()) do
                     if v.Name == "Meteor" then
                         root.CFrame = v.CFrame + Vector3.new(0,7,0)
                     end
@@ -206,9 +226,11 @@ function(v)
             end
 
                 -- // collection
-            for i,v in pairs(game:GetService("Workspace").ItemSpawns.Meteors:GetDescendants()) do
-                if v:FindFirstChild("Interaction") then
-                    fireproximityprompt(v.Interaction, 1, true)
+            if char then
+                for i,v in pairs(game:GetService("Workspace").ItemSpawns.Meteors:GetDescendants()) do
+                    if v:FindFirstChild("Interaction") then
+                        fireproximityprompt(v.Interaction, 1, true)
+                    end
                 end
             end
 
@@ -216,51 +238,64 @@ function(v)
 
         -- // chest farm
         elseif Config.farmMethod == "Chest Farm" then
-            print("Chest Farming...")
-            for i,v in pairs(game:GetService("Workspace").ItemSpawns.Chests:GetDescendants()) do
-                if v.Name == "RootPart" then
-                    root.CFrame = v.CFrame + Vector3.new(0,7,0)
+            if char then
+                print("Chest Farming...")
+                for i,v in pairs(game:GetService("Workspace").ItemSpawns.Chests:GetDescendants()) do
+                    if v.Name == "RootPart" then
+                        root.CFrame = v.CFrame + Vector3.new(0,7,0)
+                    end
                 end
             end
 
                 -- // collection
-            for i,v in pairs(game:GetService("Workspace").ItemSpawns.Chests:GetDescendants()) do
-                if v:FindFirstChild("Interaction") then
-                    fireproximityprompt(v.Interaction, 1, true)
+            if char then
+                for i,v in pairs(game:GetService("Workspace").ItemSpawns.Chests:GetDescendants()) do
+                    if v:FindFirstChild("Interaction") then
+                        fireproximityprompt(v.Interaction, 1, true)
+                    end
                 end
             end
 
                 repeat task.wait() until Config.OnFarm
 
         elseif Config.farmMethod == "Sand Debris Farm" then
-            print("Sand farming...")
-            for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
-                if v.Name == "SandDebris" then
-                    root.CFrame = v.CFrame + Vector3.new(0,0,5)
+            
+            if char then
+                print("Sand farming...")
+                for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
+                    if v.Name == "SandDebris" then
+                        root.CFrame = v.CFrame + Vector3.new(0,0,5)
+                    end
                 end
             end
 
-            for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
-                if v:FindFirstChild("Interaction") then
-                    fireproximityprompt(v.Interaction, 1, true)
+            if char then
+                for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
+                    if v:FindFirstChild("Interaction") then
+                        fireproximityprompt(v.Interaction, 1, true)
+                    end
                 end
             end
 
                 repeat task.wait() until Config.OnFarm
                 
         elseif Config.farmMethod == "Item Farm" then
-            print("Regular farm....")
-            for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
-                if v.Name == "SpawnLocation" then
-                    if #v:GetChildren() > 0 then
-                        root.CFrame = v:GetChildren()[1].CFrame
+            if char then
+                print("Regular farm....")
+                for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
+                    if v.Name == "SpawnLocation" then
+                        if #v:GetChildren() > 0 then
+                            root.CFrame = v:GetChildren()[1].CFrame
+                        end
                     end
                 end
             end
                     
-            for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
-                if v:FindFirstChild("Interaction") then
-                    fireproximityprompt(v.Interaction, 1, true)
+            if char then
+                for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
+                    if v:FindFirstChild("Interaction") then
+                        fireproximityprompt(v.Interaction, 1, true)
+                    end
                 end
             end
                 repeat task.wait() until Config.OnFarm
@@ -268,6 +303,128 @@ function(v)
         end
     end
 end)
+
+-- // dio farm
+other:Cheat("Checkbox", "Dio Farm", 
+function(v)
+    Config.dioOn = v
+
+    while Config.dioOn do
+        if char then
+            if game:GetService("Workspace").Living.Dio then
+                root.CFrame = game:GetService("Workspace").Living.Dio.HumanoidRootPart.CFrame + Vector3.new(5, 0, 0)
+            end
+        end
+
+        repeat task.wait() until Config.dioOn
+    end
+end)
+other:Cheat("Label", " ")
+
+
+other:Cheat("Checkbox", "Auto Key E", function(v)
+    Config.e = v
+
+    while Config.e do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("E")
+        end
+    end
+end)
+
+other:Cheat("Checkbox", "Auto Key R", function(v)
+    Config.r = v
+
+    while Config.r do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("R")
+        end
+    end
+end)
+
+other:Cheat("Checkbox", "Auto Key T", function(v)
+    Config.t = v
+
+    while Config.t do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("T")
+        end
+    end
+end)
+
+other:Cheat("Checkbox", "Auto Key Y", function(v)
+    Config.y = v
+
+    while Config.y do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("Y")
+        end
+    end
+end)
+
+other:Cheat("Checkbox", "Auto Key F", function(v)
+    Config.f = v
+
+    while Config.f do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("F")
+        end
+    end
+end)
+
+other:Cheat("Checkbox", "Auto Key G", function(v)
+    Config.g = v
+
+    while Config.g do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("G")
+        end
+    end
+end)
+
+other:Cheat("Checkbox", "Auto Key H", function(v)
+    Config.h = v
+
+    while Config.h do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("H")
+        end
+    end
+end)
+
+other:Cheat("Checkbox", "Auto Key J", function(v)
+    Config.j = v
+
+    while Config.j do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("J")
+        end
+    end
+end)
+
+other:Cheat("Checkbox", "Auto Key B", function(v)
+    Config.b = v
+
+    while Config.b do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("B")
+        end
+    end
+end)
+
+-- // god mode
+other:Cheat("Checkbox", "God Mode", function(v)
+    Config.GodMode = v
+
+    while Config.GodMode do
+        if char then
+            if Config.GodMode then
+                game:GetService("Players").LocalPlayer.Character.Values.Block:Destroy()
+            end
+        end
+    end
+end)
+
 
 --[[ idk
 
@@ -346,6 +503,7 @@ end)
         end]]
 --[[ previous stuff
 
+
                         for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
                                     if v.Name == "SpawnLocation" then
                                         root.CFrame = v.CFrame
@@ -356,7 +514,7 @@ end)
 -- // Misc
 local misc = FinityWindow:Category("Misc")
 local SpeednJump = misc:Sector("Speed & Jump")
-local godMode = misc:Sector("God Mode")
+
 
 -- // Walk speed and Jump power changer
 SpeednJump:Cheat("Slider", "Walk Speed", function(s)
@@ -375,10 +533,7 @@ yes = s
     end
 end)
 
--- // god mode
-godMode:Cheat("Button", "God Mode", function()
-    game:GetService("Players").LocalPlayer.Character.Values.Block:Destroy()
-end)
+
 
 
 -- // Settings
