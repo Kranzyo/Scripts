@@ -23,13 +23,48 @@ lp.CharacterAdded:Connect(function(character)
 	root = character:WaitForChild("HumanoidRootPart")
 end)
 
+-- config module
+local ConfigSystem = Debug and loadfile("Modules/ConfigSystem.lua")() or loadstring(game:HttpGet("https://raw.githubusercontent.com/AlexR32/Roblox/main/ConfigSystem.lua"))()
+-- config system
+local function SaveConfig()
+	if isfile("Island's Config") then
+		ConfigSystem.WriteJSON(Config, "Kranz's Scripts/Island's Config.JSON")
+
+	else
+		makefolder("Kranz's Scripts")
+		ConfigSystem.WriteJSON(Config, "Kranz's Scripts/Island's Config.JSON")
+	end
+end
+
+local function LoadConfig()
+	if isfile("Island's Config") then
+		getgenv().Config = ConfigSystem.ReadJSON("Kranz's Scripts/Island's Config.JSON", Config)
+
+	else
+		makefolder("Kranz's Scripts")
+		ConfigSystem.WriteJSON(Config, "Kranz's Scripts/Island's Config.JSON")
+	end
+end
+
+
+
 getgenv().Config = {
+
+	themes = {
+		Background = Color3.fromRGB(24, 24, 24),
+		Glow = Color3.fromRGB(0, 0, 0),
+		Accent = Color3.fromRGB(10, 10, 10),
+		LightContrast = Color3.fromRGB(20, 20, 20),
+		DarkContrast = Color3.fromRGB(14, 14, 14),  
+		TextColor = Color3.fromRGB(255, 255, 255)
+	},
 
 	islandTpList = {
 		"Portal"
 	},
 
-	islandTpSelection = ""
+	islandTpSelection = "",
+	tweenSpeed = 16
 }
 
 
@@ -45,8 +80,11 @@ for i,v in pairs(getconnections(lp.Idled)) do
 end
 
 if game:GetService("CoreGui"):FindFirstChild("Venyx") then
-    game.CoreGui.gameName:Destroy()
+    game.CoreGui[gameName]:Destroy()
 end
+
+LoadConfig()
+-- ui lib
 local venyx = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kranzyo/UI-Libraries/main/Venyx.lua"))()
 local UI = venyx.new(gameName, 5012540643) -- Edit this please
 
@@ -66,13 +104,38 @@ end)
 
 
 -- // Teleports
-local teleportPage = UI:addPage("Teleports", 5012543495)
-local islandTeleports = teleportPage:addSection("Island Teleports")
-islandTeleports:addDropdown("Teleports", Config.islandTpList, function(v)
+local function GetTime(Distance, Speed)
+	local Time = Distance / Speed
+	return Time
+end
 
-	if Config.islandTpSelection == "Portal" and char then
-		local Info = TweenInfo.new(5)
-		local Tween = TweenService:Create(root, Info, {CFrame = })
+local teleportPage = UI:addPage("Teleports", 5012543495)
+local islandTeleports = teleportPage:addSection("Teleports")
+
+islandTeleports:addSlider("Tp Speed", 200, 0, 750, function(v)
+	Config.tweenSpeed = v
+end)
+
+islandTeleports:addDropdown("Teleports", Config.islandTpList, function(v)
+	Config.islandTpSelection = v
+
+	if Config.islandTpSelection == "Portal" then
+		if char then
+			-- checking for distance and then tweens to which is closest
+			if (root.Position - game:GetService("Workspace").spawnPrefabs["Main Island"].portalToIsland.Root.Position).magnitude > (root.Position - game:GetService("Workspace").Islands["2ba88dec-db21-4123-a5b4-3c5a7e0e2dd5-island"].Blocks.portalToSpawn.Position).magnitude then
+				local Distance = (root.Position - game:GetService("Workspace").Islands["2ba88dec-db21-4123-a5b4-3c5a7e0e2dd5-island"].Blocks.portalToSpawn.Position).magnitude
+				local Info = TweenInfo.new(GetTime(Distance, Config.tweenSpeed), Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+				local Tween = TweenService:Create(root, Info, {CFrame = game:GetService("Workspace").Islands["2ba88dec-db21-4123-a5b4-3c5a7e0e2dd5-island"].Blocks.portalToSpawn.CFrame})
+				Tween:Play()
+
+				-- Tween for Hub Portal
+			elseif  (root.Position - game:GetService("Workspace").spawnPrefabs["Main Island"].portalToIsland.Root.Position).magnitude < (root.Position - game:GetService("Workspace").Islands["2ba88dec-db21-4123-a5b4-3c5a7e0e2dd5-island"].Blocks.portalToSpawn.Position).magnitude then
+				local Distance = (root.Position - game:GetService("Workspace").spawnPrefabs["Main Island"].portalToIsland.Root.Position).magnitude
+				local Info = TweenInfo.new(GetTime(Distance, Config.tweenSpeed), Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+				local Tween = TweenService:Create(root, Info, {CFrame = game:GetService("Workspace").spawnPrefabs["Main Island"].portalToIsland.Root.CFrame})
+				Tween:Play()
+			end
+		end
 	end
 end)
 
@@ -99,16 +162,29 @@ speed_Jump:addToggle("Activate Speed/Jump", nil, function(v)
 end)
 -- // Settings
 local settings = UI:addPage("Settings", 5012544386)
+local themeChanger = settings:addSection("Themes Colors")
+
+for theme, color in pairs(Config.themes) do
+	themeChanger:addColorPicker(theme, color, function(color3)
+		UI:setTheme(theme, color3)
+	end)
+end
+
 local general = settings:addSection("Toggle Keybind")
 general:addKeybind("Toggle Keybind", Enum.KeyCode.P, function()
 	UI:toggle()
 end)
 
 general:addButton("Delete GUI", function()
-	game.CoreGui.gameName:Destroy()
+	game.CoreGui[gameName]:Destroy()
 end)
 
+-- load
 UI:SelectPage(UI.pages[1], true)
+
+PlayerService.PlayerRemoving:Connect(function(plr)
+	if plr == lp then SaveConfig() end
+end)
 --[[
 
 -- init
@@ -130,7 +206,7 @@ section1:addTextbox("Notification", "Default", function(v, focusLost)
 	print("Input", v)
 
 	if focusLost then
-		venyx:Notify("Title", v)
+		venyx:Notify("Title", v) -- Notification
 	end
 end)
 
