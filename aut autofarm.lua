@@ -37,7 +37,7 @@ getgenv().Config = {
         Jump = 50
     },
 
-    farmMethod = "",
+    farmMethod = "Meteor Farm",
     OnFarm = false,
     GodMode = false,
     dioOn = false,
@@ -107,7 +107,6 @@ local other = autofarm:Sector("Other")
 farms:Cheat("Dropdown", "Select Farm Method", 
 function(s)
     Config.farmMethod = s
-    print("Selected", Config.farmMethod)
 end,
 {
 options = Config.itemFarms
@@ -121,7 +120,6 @@ function(v)
     while Config.OnFarm do
         if Config.farmMethod == "Meteor Farm" then
             if char then
-                print("Meteor farming...", Config.OnFarm)
                 for i,v in pairs(game:GetService("Workspace").ItemSpawns.Meteors:GetDescendants()) do
                     if v.Name == "Meteor" then
                         root.CFrame = v.CFrame + Vector3.new(0,7,0)
@@ -143,7 +141,6 @@ function(v)
         -- // chest farm
         elseif Config.farmMethod == "Chest Farm" then
             if char then
-                print("Chest Farming...")
                 for i,v in pairs(game:GetService("Workspace").ItemSpawns.Chests:GetDescendants()) do
                     if v.Name == "RootPart" then
                         root.CFrame = v.CFrame + Vector3.new(0,7,0)
@@ -165,7 +162,6 @@ function(v)
         elseif Config.farmMethod == "Sand Debris Farm" then
             
             if char then
-                print("Sand farming...")
                 for i,v in pairs(game:GetService("Workspace").ItemSpawns["Sand Debris"]:GetDescendants()) do
                     if v.Name == "SandDebris" then
                         root.CFrame = v.CFrame + Vector3.new(0,0,5)
@@ -185,7 +181,6 @@ function(v)
                 
         elseif Config.farmMethod == "Item Farm" then
             if char then
-                print("Regular farm....")
                 for i,v in pairs(game:GetService("Workspace").ItemSpawns.StandardItems:GetDescendants()) do
                     if v.Name == "SpawnLocation" then
                         if #v:GetChildren() > 0 then
