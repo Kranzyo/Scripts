@@ -2,6 +2,7 @@
 
 -- docs : https://detourious.gitbook.io/project-finity/docs
 
+
 -- // proximity prompt by sowd
 local function fireproximityprompt(Obj, Amount, Skip)
     if Obj.ClassName == "ProximityPrompt" then 
@@ -41,6 +42,7 @@ getgenv().Config = {
     OnFarm = false,
     GodMode = false,
     dioOn = false,
+    KeyBind = "Comma",
     e = false,
     r = false,
     t = false,
@@ -86,9 +88,14 @@ if game:GetService("CoreGui"):FindFirstChild("FinityUI") then
     game.CoreGui.FinityUI:Destroy()
 end
 
+-- kick if not aut
+if game.PlaceId ~= 6846458508 then
+    lp:Kick("Game is not AUT")
+end
+
 local Finity = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/UI-Librarys/main/Finity%20UI%20Lib"))()
-local FinityWindow = Finity.new(true)
-FinityWindow.ChangeToggleKey(Enum.KeyCode.Comma)
+local FinityWindow = Finity.new(true, "A Universal Time", UDim2.new(0, 500, 0, 400))
+FinityWindow.ChangeToggleKey(Enum.KeyCode[Config.KeyBind])
 
 -- // Credits and stuff
 local CreditsCategory = FinityWindow:Category("Credits and stuff")
@@ -354,7 +361,8 @@ local Settings = FinityWindow:Category("Settings")
 local ChangeToggleKey = Settings:Sector("Change Toggle")
 ChangeToggleKey:Cheat("Dropdown", "Change Toggle Key", 
 function(s)
-    FinityWindow.ChangeToggleKey(Enum.KeyCode[s])
+    Config.KeyBind = s
+    FinityWindow.ChangeToggleKey(Enum.KeyCode[Config.KeyBind])
 end,
 {
 options = EnumKeys
