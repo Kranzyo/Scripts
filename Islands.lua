@@ -1,3 +1,4 @@
+repeat task.wait() until game.isLoaded
 -- // Game: Islands
 
 local gameName = "Islands" -- put game
@@ -17,64 +18,111 @@ local hum = char:WaitForChild("Humanoid")
 local root = char:WaitForChild("HumanoidRootPart")
 
 lp.CharacterAdded:Connect(function(character)
-	char = character
-	hum = character:WaitForChild("Humanoid")
-	root = character:WaitForChild("HumanoidRootPart")
+    char = character
+    hum = character:WaitForChild("Humanoid")
+    root = character:WaitForChild("HumanoidRootPart")
 end)
 
 -- config module
 local ConfigSystem = Debug and loadfile("Modules/ConfigSystem.lua")() or loadstring(game:HttpGet("https://raw.githubusercontent.com/AlexR32/Roblox/main/ConfigSystem.lua"))()
 -- config system
 local function SaveConfig()
-	if isfile("Kranz's Scripts/Island's Config.json") then
-		ConfigSystem.WriteJSON(Config, "Kranz's Scripts/Island's Config.json")
+    if isfile("Kranz's Scripts/Island's Config.json") then
+        ConfigSystem.WriteJSON(Config, "Kranz's Scripts/Island's Config.json")
 
-	else
-		makefolder("Kranz's Scripts")
-		ConfigSystem.WriteJSON(Config, "Kranz's Scripts/Island's Config.json")
-	end
+    else
+        makefolder("Kranz's Scripts")
+        ConfigSystem.WriteJSON(Config, "Kranz's Scripts/Island's Config.json")
+    end
 end
 
 local function LoadConfig()
-	if isfile("Kranz's Scripts/Island's Config.JSON") then
-		getgenv().Config = ConfigSystem.ReadJSON("Kranz's Scripts/Island's Config.json", Config)
+    if isfile("Kranz's Scripts/Island's Config.JSON") then
+        getgenv().Config = ConfigSystem.ReadJSON("Kranz's Scripts/Island's Config.json", Config)
 
-	else
-		makefolder("Kranz's Scripts")
-		ConfigSystem.WriteJSON(Config, "Kranz's Scripts/Island's Config.json")
-	end
+    else
+        makefolder("Kranz's Scripts")
+        ConfigSystem.WriteJSON(Config, "Kranz's Scripts/Island's Config.json")
+    end
 end
 
 local island = game:GetService("Workspace").Islands:GetChildren()[1]
 
 
 getgenv().Config = {
+    themes = {
+        Background = Color3.fromRGB(24, 24, 24),
+        Glow = Color3.fromRGB(0, 0, 0),
+        Accent = Color3.fromRGB(10, 10, 10),
+        LightContrast = Color3.fromRGB(20, 20, 20),
+        DarkContrast = Color3.fromRGB(14, 14, 14),
+        TextColor = Color3.fromRGB(255, 255, 255)
+    },
+    Farming = {
+        autoMineSelection = "(Select/None)",
+        autoMining = false,
+        autoMiningIsland = false,
+        islandTpSelection = "(Select/None)",
+        autoCropping = false,
+        autoCropSelection = "(Select/None)",
+        autoHiving = false
+    },
+    KeyBinds = {
+        ToggleBind = "RightShift"
+    }
 
-	themes = {
-		Background = Color3.fromRGB(24, 24, 24),
-		Glow = Color3.fromRGB(0, 0, 0),
-		Accent = Color3.fromRGB(10, 10, 10),
-		LightContrast = Color3.fromRGB(20, 20, 20),
-		DarkContrast = Color3.fromRGB(14, 14, 14),  
-		TextColor = Color3.fromRGB(255, 255, 255)
-	},
-
-	islandTpList = {
-		"Portal"
-
-	},
-	autoMineList = {
-		"rockCoal",
-		"rockGold",
-		"rockIron",
-		"rockStone",
-		"rockPrismarine"
-	},
-	autoMineSelection = "",
-	autoMining = false,
-	islandTpSelection = "",
 }
 
+getgenv().ScriptList = {
+    islandTpList = {
+        "Home",
+        "Hub",
+        "Slime King",
+        "Slime Island",
+        "Buffalkor Island",
+        "Pirate Island",
+        "Wizard Island",
+        "Desert Island",
+        "Spirit Island",
+        "Diamond Mine"
+    },
+    autoMineList = {
+        "rockCoal",
+        "rockGold",
+        "rockIron",
+        "rockStone",
+		"rockDiamond",
+        "rockPrismarine",
+		"rockSandstone",
+		"rockSandstoneRed"
+    },
+    cropList = {
+        "wheat",
+        "horseradish",
+        "tomato",
+        "pumpkin",
+        "starfruit",
+        "potato",
+        "avocado",
+        "carrot",
+        "Candy Cane",
+        "rice",
+        "coconut",
+        "spirit"
+    },
+    BerryList = {
+        "Berries",
+        "Blueberries",
+        "Blackberries"
+    },
+
+    fruitList = {
+        "Apple",
+        "Orange",
+        "Lemon",
+        "Plum"
+    }
+}
 
 
 --[[ Backups
@@ -83,23 +131,12 @@ https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/source.lua
 https://raw.githubusercontent.com/sannin9000/Ui-Libraries/main/Venyx 
 ]]--
 
--- making the list for me hehe
-task.spawn(function()
-	for i,v in pairs(game:GetService("Workspace").spawnPrefabs.PortalDestinations:GetChildren()) do
-		Config.islandTpList[1+i] = tostring(v)
-	end
-end)
--- tp to main island and back to load stuff cuz islands stupid
-task.spawn(function()
-	root.CFrame = CFrame.new(-76.4506836, 46.7478752, -621.069397, 0.814922869, 4.50604709e-08, 0.579569459, -4.02935241e-09, 1, -7.20825781e-08, -0.579569459, 5.64064493e-08, 0.814922869)
-	task.wait(.5)
-	root.CFrame = CFrame.new(-7494, 37.699955, -7515, 1, -6.6518574e-10, 5.88613042e-16, 6.6518574e-10, 1, -8.8171646e-08, -5.29962522e-16, 8.8171646e-08, 1)
-end)
-
 -- // anti afk
-for i,v in pairs(getconnections(lp.Idled)) do
-	v:Disable()
-end
+task.spawn(function()
+    for i, v in pairs(getconnections(lp.Idled)) do
+        v:Disable()
+    end
+end)
 
 if game:GetService("CoreGui"):FindFirstChild(gameName) then
     game.CoreGui[gameName]:Destroy()
@@ -117,178 +154,380 @@ local creditsPage = UI:addPage("Credits", 5012544693)
 local creditsSection = creditsPage:addSection("Devs")
 local desc = creditsPage:addSection("Description")
 creditsSection:addButton("Click for Credits", function()
-    UI:Notify("Credits", [[UI - Denosaur @ v3rmillion.net
-Script - KayD @ v3rmillion.net /Kranz#0737]])
+    UI:Notify("Credits", "UI - Denosaur @ v3rmillion.net \nScript - KayD @ v3rmillion.net /Kranz#0737")
 end)
-desc:addButton("Click for description", function()
-    UI:Notify("Description", "Island's Script ig")
+desc:addButton("Important Info", function()
+    UI:Notify("Stuff", Config.KeyBinds.ToggleBind.." for toggle")
 end)
 
 -- // Main stuff
 local autofarmPage = UI:addPage("Farming", 9097098907)
-local autoMiner = autofarmPage:addSection("Auto Miner")
-autoMiner:addDropdown("Select", Config.autoMineList, function(v)
-	Config.autoMineSelection = v
+
+-- // Auto Crop
+local autoCrop = autofarmPage:addSection("Auto Crop")
+autoCrop:addDropdown("Select Crop", ScriptList.cropList, function(v)
+    Config.Farming.autoCropSelection = v
+    print(Config.Farming.autoCropSelection)
 end)
-autoMiner:addToggle("Auto Mine", nil, function(v)
-	Config.autoMining = v
 
-	while Config.autoMining do
-		if char then
-			if Config.autoMineSelection == Config.autoMineSelection then
-				for i,v in pairs(workspace.WildernessBlocks:GetChildren()) do
-					if v.Name == Config.autoMineSelection then
-						repeat task.wait() 
 
-							root.CFrame = v.CFrame + Vector3.new(0,5,0)
+local currentCrop = {}
+autoCrop:addToggle("Auto Crops", nil, function(v)
+    Config.Farming.autoCropping = v
+	if island.Blocks[Config.Farming.autoCropSelection] then
+		root.CFrame = island.Blocks[Config.Farming.autoCropSelection].CFrame
+	end
 
-							local args = {
-								[1] = {
-									["player_tracking_category"] = "join_from_web",
-									["part"] = v,
-									["block"] = v,
-									["norm"] = v.Position,
-									["pos"] = v.Position
-								}
+	if Config.Farming.autoCropping then
+        for i,v in pairs(island.Blocks:GetChildren()) do
+            if v.Name == Config.Farming.autoCropSelection then
+                table.insert(currentCrop, v)
+                local args = {
+                    [1] = "sickleStone",
+                    [2] = {
+                        
+                    }
+                }
+
+				table.insert(args[2], v)
+				--for place, value in pairs(currentCrop) do
+					--args[2][place] = value
+				--end
+				print(#args[2],' ', #currentCrop)
+			end
+        end
+		game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.SwingSickle:InvokeServer(unpack(args))
+		table.clear(currentCrop)
+		table.clear(args[2])
+    end
+end)
+
+local currentCropPos = {}
+autoCrop:addToggle("Auto Replant", nil, function(v)
+    Config.Farming.autoPlanting = v
+
+    while Config.Farming.autoPlanting do
+      for i,v in pairs(currentCrop) do
+        local vec = v.Position
+		table.insert(currentCropPos, CFrame.new(vec) * v.CFrame.Angles)
+        print(currentCropPos[i])
+	  end
+
+      repeat task.wait() until Config.Farming.autoPlanting
+    end
+end)
+
+autoCrop:addToggle("Auto Sell", nil, function(v)
+	Config.Farming.autoCropSelling = v
+
+	while Config.Farming.autoCropSelling do task.wait(5)
+		if Config.Farming.autoCropSelection == Config.Farming.autoCropSelection then
+			for i,v in pairs(lp.Backpack:GetChildren()) do
+				if v.Name == Config.Farming.autoCropSelection..'Harvested' then
+					if v.Amount.Value > 0 then
+						local args = {
+							[1] = {
+								["merchant"] = "cropSell",
+								["offerId"] = 1,
+								["amount"] = v.Amount.Value
 							}
+						}
 
-							game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_BLOCK_HIT_REQUEST:InvokeServer(unpack(args))
-						
-						until v.Parent == nil or Config.autoMining == false
+						if Config.Farming.autoCropSelection == 'wheat' then
+							args[1]["merchant"] = "cropSell"
+							args[1]['offerId'] = 1
+						elseif Config.Farming.autoCropSelection == 'tomato' then
+							args[1]["merchant"] = "cropSell"
+							args[1]['offerId'] = 5
+						elseif Config.Farming.autoCropSelection == 'potato' then
+							args[1]["merchant"] = "cropSell"
+							args[1]['offerId'] = 4
+						elseif Config.Farming.autoCropSelection == 'horseradish' then
+							args[1]["merchant"] = "adventurer"
+							args[1]['offerId'] = 2
+						elseif Config.Farming.autoCropSelection == 'pumpkin' then
+							UI:Notify('Notice', 'not sure but the autumn shop is where pumkins are at, so if it doesn\' work don\'t blame me')
+
+						end
+						game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_MERCHANT_ORDER_REQUEST:InvokeServer(unpack(args))
 					end
 				end
-
-				repeat task.wait() until Config.autoMining
 			end
 		end
 	end
+end)
+
+
+-- // Auto Miner
+local autoMiner = autofarmPage:addSection("Auto Miner")
+autoMiner:addDropdown("Select", ScriptList.autoMineList, function(v)
+    Config.Farming.autoMineSelection = v
+end)
+autoMiner:addToggle("Auto Mine (Hub)", nil, function(v)
+    Config.Farming.autoMining = v
+
+    while Config.Farming.autoMining do
+        if char then
+            if Config.Farming.autoMineSelection == Config.Farming.autoMineSelection then
+                for i,v in pairs(workspace.WildernessBlocks:GetChildren()) do
+                    if v.Name == Config.Farming.autoMineSelection then
+                        repeat task.wait()
+                            root.CFrame = v.CFrame + Vector3.new(0,5,0)
+
+                            local args = {
+                                [1] = {
+                                    ["part"] = v,
+                                    ["block"] = v,
+                                    ["norm"] = v.Position,
+                                    ["pos"] = v.Position
+                                }
+                            }
+
+                            game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_BLOCK_HIT_REQUEST:InvokeServer(unpack(args))
+
+                        until v.Parent == nil or Config.Farming.autoMining == false
+                    end
+                end
+
+                repeat task.wait() until Config.Farming.autoMining
+            end
+        end
+    end
+end)
+
+autoMiner:addToggle("Auto Mine (Island)", nil, function(v)
+    Config.Farming.autoMiningIsland = v
+
+    while Config.Farming.autoMiningIsland do
+        if char then
+            if Config.Farming.autoMineSelection == Config.Farming.autoMineSelection then
+                for i,v in pairs(island.Blocks:GetChildren()) do
+                    if v.Name == Config.Farming.autoMineSelection then
+                        repeat task.wait()
+                            root.CFrame = v.CFrame + Vector3.new(0,5,0)
+
+                            local args = {
+                                [1] = {
+                                    ["part"] = v,
+                                    ["block"] = v,
+                                    ["norm"] = v.Position,
+                                    ["pos"] = v.Position
+                                }
+                            }
+
+                            game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_BLOCK_HIT_REQUEST:InvokeServer(unpack(args))
+
+                        until v.Parent == nil or Config.Farming.autoMiningIsland == false
+                    end
+                end
+
+                repeat task.wait() until Config.Farming.autoMiningIsland
+            end
+        end
+    end
+end)
+
+-- // Mobs farming page
+local mobPage = UI:addPage("Mobs", 9097607528)
+local mobAutoSec = mobPage:addSection("WIP")
+mobAutoSec:addButton("WIP", function()
+    return
 end)
 
 -- // Teleports
 local teleportPage = UI:addPage("Teleports", 5012543481)
 local islandTeleports = teleportPage:addSection("Teleports")
 
-islandTeleports:addDropdown("Teleports", Config.islandTpList, function(v)
-	Config.islandTpSelection = v
-	
-	print(Config.islandTpSelection)
-	if Config.islandTpSelection == "Portal" then
-		if char then
-				-- checking for distance and then tweens to which is closest
-			if  (root.Position - game:GetService("Workspace").spawnPrefabs["Main Island"].portalToIsland.Root.Position).magnitude < (root.Position - game:GetService("Workspace").Islands["2ba88dec-db21-4123-a5b4-3c5a7e0e2dd5-island"].Blocks.portalToSpawn.Position).magnitude then
-				root.CFrame = game:GetService("Workspace").spawnPrefabs["Main Island"].portalToIsland.Root.CFrame
-			elseif (root.Position - game:GetService("Workspace").spawnPrefabs["Main Island"].portalToIsland.Root.Position).magnitude > (root.Position - game:GetService("Workspace").Islands["2ba88dec-db21-4123-a5b4-3c5a7e0e2dd5-island"].Blocks.portalToSpawn.Position).magnitude then
-				root.CFrame = island.Blocks.portalToSpawn.CFrame
-			end
-		end
+islandTeleports:addDropdown("Teleports", ScriptList.islandTpList, function(v)
+    Config.Farming.islandTpSelection = v
 
-	elseif Config.islandTpSelection == "Slime King" then
-		if char then
-			root.CFrame = game:GetService("Workspace").spawnPrefabs.WildEventTriggers["slime_king_spawn"].CFrame
-		end
+    print(Config.Farming.islandTpSelection)
+    if Config.Farming.islandTpSelection == "Hub" then
+        if char then
+            root.CFrame = CFrame.new(-15.7872686, 46.9910393, -635.01355, 0.0311217327, 2.64968811e-08, -0.999515593, -4.82117057e-09, 1, 2.63596078e-08, 0.999515593, 3.99847844e-09, 0.0311217327)
+        end
+    elseif Config.Farming.islandTpSelection == "Home" then
+        if char then
+            root.CFrame = CFrame.new(-7494, 37.699955, -7515, 1, -5.16532914e-08, -2.44628637e-07, 5.16532772e-08, 1, -6.17510807e-08, 2.44628637e-07, 6.17510665e-08, 1)
+        end
 
-	elseif Config.islandTpSelection == Config.islandTpSelection then
-		if char then
-			root.CFrame = game:GetService("Workspace").spawnPrefabs.PortalDestinations[Config.islandTpSelection].CFrame
-		end
-	end
+    elseif Config.Farming.islandTpSelection == "Slime King" then
+        if char then
+            root.CFrame = game:GetService("Workspace").spawnPrefabs.WildEventTriggers["slime_king_spawn"].CFrame
+        end
+
+    elseif Config.Farming.islandTpSelection == "Diamond Mine" then
+        if char then
+            root.CFrame = CFrame.new(2880.32422, 285, 1176.29675, -0.0757208243, 1.15132046e-07, 0.997129083, -1.62103113e-08, 1, -1.16694522e-07, -0.997129083, -2.49999772e-08, -0.0757208243)
+        end
+
+    elseif Config.Farming.islandTpSelection == "Slime Island" then
+        if char then
+            root.CFrame = CFrame.new(691.712891, 177.889725, -71.4396973, -0.981482506, -6.32204831e-08, 0.19155167, -4.71530193e-08, 1, 8.84389095e-08, -0.19155167, 7.7769009e-08, -0.981482506)
+        end
+
+    elseif Config.Farming.islandTpSelection == "Buffalkor Island" then
+        if char then
+            root.CFrame = CFrame.new(1254.98425, 437.162415, 44.0008926, -0.924392283, 1.65986047e-09, -0.381443232, 6.36016528e-09, 1, -1.10617435e-08, 0.381443232, -1.26514328e-08, -0.924392283)
+        end
+
+    elseif Config.Farming.islandTpSelection == "Wizard Island" then
+        if char then
+            root.CFrame = CFrame.new(1496.72437, 336.992493, -700.559814, 0.824572325, -6.39146975e-08, -0.565756559, 7.2611428e-08, 1, -7.14322113e-09, 0.565756559, -3.51902898e-08, 0.824572325)
+        end
+
+    elseif Config.Farming.islandTpSelection == "Desert Island" then
+        if char then
+            root.CFrame = CFrame.new(900.123657, 293.742065, -1875.72083, 0.363023937, -6.62864679e-08, 0.931779802, -3.52753133e-08, 1, 8.48829842e-08, -0.931779802, -6.36833803e-08, 0.363023937)
+        end
+
+    elseif Config.Farming.islandTpSelection == "Spirit Island" then
+        if char then
+            root.CFrame = CFrame.new(-2.39787984, 295.576447, 863.235474, -0.0422376581, 1.87707219e-08, -0.999107599, -2.98149949e-08, 1, 2.00479278e-08, 0.999107599, 3.06351673e-08, -0.0422376581)
+        end
+
+    elseif Config.Farming.islandTpSelection == "Pirate Island" then
+        if char then
+            root.CFrame = CFrame.new(-282.973572, 365.107178, -2004.78796, -0.998574078, -9.69962421e-09, 0.0533836633, -1.21391892e-08, 1, -4.53744633e-08, -0.0533836633, -4.59577976e-08, -0.998574078)
+        end
+    end
 end)
 
 
 -- // Misc
 local misc = UI:addPage("Misc", 5012544944)
-local speed_Jump = misc:addSection("Walk Speed/JumpPower")
--- // jump slider
-speed_Jump:addSlider("Jump", 50, 50, 250, function(v)
-    getgenv().Jump = v
-end)
-speed_Jump:addToggle("Activate Speed/Jump", nil, function(v)
-	speedOn = v
-    while speedOn do task.wait()
-		if char then
-			hum.JumpPower = Jump
+
+local miscSec = misc:addSection("Misc")
+
+miscSec:addToggle("Clear rocks and tallGrass", nil, function(v)
+	getgenv().clearingClutter = v
+
+	while clearingClutter do
+		for i,v in pairs(island.Blocks:GetChildren()) do
+			if v.Name == 'naturalRock1' or v.Name == 'tallGrass' then
+				repeat task.wait()
+					root.CFrame = v.CFrame + Vector3.new(0,2,0)
+
+					local args = {
+						[1] = {
+							["part"] = v,
+							["block"] = v,
+							["norm"] = v.Position,
+							["pos"] = v.Position
+						}
+					}
+
+					game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_BLOCK_HIT_REQUEST:InvokeServer(unpack(args))
+
+				until v.Parent == nil or clearingClutter == false
+			end
 		end
+
+		repeat task.wait() until clearingClutter
+	end
+end)
+
+miscSec:addToggle("Auto Hive", nil, function(v)
+    Config.Farming.autoHiving = v
+
+    while Config.Farming.autoHiving do
+        for i,v in pairs(island.Blocks:GetChildren()) do
+            if v.Name == 'tree4' then
+                local args = {
+                    [1] = {
+                        ["tree"] = v
+                    }
+                }
+
+                game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_COLLECT_HONEY:InvokeServer(unpack(args))
+            end
+        end
+
+        repeat task.wait() until Config.Farming.autoHiving
     end
 end)
 
-local antiLagSec = misc:addSection("AntiLag Section")
-antiLagSec:addButton("Click to Enable", function()
-	workspace:FindFirstChildOfClass('Terrain').WaterWaveSize = 0
-	workspace:FindFirstChildOfClass('Terrain').WaterWaveSpeed = 0
-	workspace:FindFirstChildOfClass('Terrain').WaterReflectance = 0
-	workspace:FindFirstChildOfClass('Terrain').WaterTransparency = 0
-	sethiddenproperty(workspace:FindFirstChildOfClass('Terrain'), "Decoration", false)
-	game:GetService("Lighting").GlobalShadows = false
-	game:GetService("Lighting").FogEnd = 9e9
-	settings().Rendering.QualityLevel = 1
-	for i,v in pairs(game:GetDescendants()) do
-		if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
-			v.Material = "Plastic"
-			v.Reflectance = 0
-		elseif v:IsA("Decal") then
-			v.Transparency = 1
-		elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-			v.Lifetime = NumberRange.new(0)
-		elseif v:IsA("Explosion") then
-			v.BlastPressure = 1
-			v.BlastRadius = 1
-		end
-	end
-	for i,v in pairs(game:GetService("Lighting"):GetDescendants()) do
-		if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
-			v.Enabled = false
-		end
-	end
-	workspace.DescendantAdded:Connect(function(child)
-		coroutine.wrap(function()
-			if child:IsA('ForceField') then
-				game:GetService('RunService').Heartbeat:Wait()
-				child:Destroy()
-			elseif child:IsA('Sparkles') then
-				game:GetService('RunService').Heartbeat:Wait()
-				child:Destroy()
-			elseif child:IsA('Smoke') or child:IsA('Fire') then
-				game:GetService('RunService').Heartbeat:Wait()
-				child:Destroy()
-			end
-		end)()
-	end)
+
+miscSec:addDropdown("Season Changer",{'summer','winter','fall','spring'} ,function(v)
+    workspace.Season.Value = v
+end)
+
+miscSec:addButton("Lag Remover", function()
+    workspace:FindFirstChildOfClass('Terrain').WaterWaveSize = 0
+    workspace:FindFirstChildOfClass('Terrain').WaterWaveSpeed = 0
+    workspace:FindFirstChildOfClass('Terrain').WaterReflectance = 0
+    workspace:FindFirstChildOfClass('Terrain').WaterTransparency = 0
+    setscriptable(workspace:FindFirstChildOfClass('Terrain'), "Decoration", true)
+    sethiddenproperty(workspace:FindFirstChildOfClass('Terrain'), "Decoration", false)
+    game:GetService("Lighting").GlobalShadows = false
+    game:GetService("Lighting").FogEnd = 9e9
+    for i,v in pairs(game:GetDescendants()) do
+        if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+            v.Material = "Plastic"
+            v.Reflectance = 0
+        elseif v:IsA("Decal") then
+            v.Transparency = 1
+        elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+            v.Lifetime = NumberRange.new(0)
+        elseif v:IsA("Explosion") then
+            v.BlastPressure = 1
+            v.BlastRadius = 1
+        end
+    end
+    for i,v in pairs(game:GetService("Lighting"):GetDescendants()) do
+        if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
+            v.Enabled = false
+        end
+    end
+    workspace.DescendantAdded:Connect(function(child)
+        coroutine.wrap(function()
+            if child:IsA('ForceField') then
+                game:GetService('RunService').Heartbeat:Wait()
+                child:Destroy()
+            elseif child:IsA('Sparkles') then
+                game:GetService('RunService').Heartbeat:Wait()
+                child:Destroy()
+            elseif child:IsA('Smoke') or child:IsA('Fire') then
+                game:GetService('RunService').Heartbeat:Wait()
+                child:Destroy()
+            end
+        end)()
+    end)
 end)
 
 -- // Settings
-local settings = UI:addPage([[Setting n
-Themes]], 5012544372)
+local settings = UI:addPage("Setting n\nThemes", 5012544372)
 local themeChanger = settings:addSection("Theme Colors")
 
 for theme, color in pairs(Config.themes) do
-	themeChanger:addColorPicker(theme, color, function(color3)
-		color = color3 
-		Config.themes[theme] = color3
-		UI:setTheme(theme, Config.themes[theme])
-	end)
+    themeChanger:addColorPicker(theme, color, function(color3)
+        color = color3
+        Config.themes[theme] = color3
+        UI:setTheme(theme, Config.themes[theme])
+    end)
 end
 
-local general = settings:addSection("General")
-general:addKeybind("Toggle Keybind", Enum.KeyCode.P, function()
-	UI:toggle()
+local generalSettings = settings:addSection("General")
+generalSettings:addKeybind("Toggle Keybind", Enum.KeyCode[Config.KeyBinds.ToggleBind], function()
+    UI:toggle()
 end)
 
-general:addButton("Delete GUI", function()
-	game.CoreGui[gameName]:Destroy()
+generalSettings:addButton("Delete GUI", function()
+    game.CoreGui[gameName]:Destroy()
 end)
 
-
+-- // Saved theme loader
 for theme, color in pairs(Config.themes) do
-	UI:setTheme(theme, color)
+    UI:setTheme(theme, color)
 end
 -- load
 UI:SelectPage(UI.pages[1], true)
 
 PlayerService.PlayerRemoving:Connect(function(plr)
-	if plr == lp then SaveConfig() end
+    if plr == lp then SaveConfig() end
 end)
---[[
 
+--[[
 -- init
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/source.lua"))()
 local venyx = library.new("Venyx", 5013109572)
@@ -299,38 +538,38 @@ local section1 = page:addSection("Section 1")
 local section2 = page:addSection("Section 2")
 
 section1:addToggle("Toggle", nil, function(v)
-	print("Toggled", v)
+    print("Toggled", v)
 end)
 section1:addButton("Button", function()
-	print("Clicked")
+    print("Clicked")
 end)
 section1:addTextbox("Notification", "Default", function(v, focusLost)
-	print("Input", v)
+    print("Input", v)
 
-	if focusLost then
-		venyx:Notify("Title", v) -- Notification
-	end
+    if focusLost then
+        venyx:Notify("Title", v) -- Notification
+    end
 end)
 
 section2:addKeybind("Toggle Keybind", Enum.KeyCode.One, function()
-	print("Activated Keybind")
-	venyx:toggle()
+    print("Activated Keybind")
+    venyx:toggle()
 end, function()
-	print("Changed Keybind")
+    print("Changed Keybind")
 end)
 section2:addColorPicker("ColorPicker", Color3.fromRGB(50, 50, 50))
 section2:addColorPicker("ColorPicker2")
 
 section2:addSlider("Slider", 0, -100, 100, function(v) -- // slider
-	print("Dragged", v)
+    print("Dragged", v)
 end)
 section2:addDropdown("Dropdown", {"Hello", "World", "Hello World", "Word", 1, 2, 3})
 section2:addDropdown("Dropdown", {"Hello", "World", "Hello World", "Word", 1, 2, 3}, function(s)
-	print("Selected", s)
+    print("Selected", s)
 end)
 section2:addButton("Button")
 
 
 -- load
 venyx:SelectPage(venyx.pages[1], true)
-]]--
+]]								
