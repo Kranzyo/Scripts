@@ -62,11 +62,28 @@ getgenv().Config = {
         autoMineSelection = "(Select/None)",
         autoMining = false,
         autoMiningIsland = false,
+
         islandTpSelection = "(Select/None)",
+
         autoCropping = false,
         autoCropSelection = "(Select/None)",
+        autoPlanting = false,
         autoHiving = false
     },
+    Machinery = {
+        autoPicking = false,
+        autoMachineryMetalInserting = false,
+        autoMachineryCoalInserting = false,
+        autoMachineryItemSelection = "(Select/None)",
+        autoMachineryFurnaceSelection = "(Select/None)"
+        
+    },
+    Misc = {
+        autoPlowing = false,
+        autoUnplowing = false,
+        plowDistance = 10
+    },
+
     KeyBinds = {
         ToggleBind = "RightShift"
     }
@@ -121,7 +138,27 @@ getgenv().ScriptList = {
         "Orange",
         "Lemon",
         "Plum"
+    },
+    -- autoEquipPicList = {
+        
+    -- },
+    -- autoEquipList = {
+    --     "woodSword",
+    --     "stoneSword",
+    --     "woodPickaxe",
+    --     "stonePickaxe",
+    --     "gildedSteelPickaxe",
+    --     "diamondPickaxe"
+    -- },
+    autoMachineryItemList = {
+        "iron",
+        "gold",
+        "bambooDried"
+    },
+    autoMachineryFurnaceList = {
+        "smallFurnace"
     }
+
 }
 
 
@@ -170,7 +207,9 @@ autoCrop:addDropdown("Select Crop", ScriptList.cropList, function(v)
     print(Config.Farming.autoCropSelection)
 end)
 
-
+local replantCount = 0
+local cropLoopCount = 0 
+local currentCropPos = {}
 local currentCrop = {}
 autoCrop:addToggle("Auto Crops", nil, function(v)
     Config.Farming.autoCropping = v
@@ -178,42 +217,78 @@ autoCrop:addToggle("Auto Crops", nil, function(v)
 		root.CFrame = island.Blocks[Config.Farming.autoCropSelection].CFrame
 	end
 
-	if Config.Farming.autoCropping then
-        for i,v in pairs(island.Blocks:GetChildren()) do
-            if v.Name == Config.Farming.autoCropSelection then
-                table.insert(currentCrop, v)
-                local args = {
-                    [1] = "sickleStone",
-                    [2] = {
+    local args = {
+        [1] = "sickleStone",
+        [2] = {
                         
-                    }
-                }
+            }
+    }
+    
+	while Config.Farming.autoCropping do
+        for i,v in pairs(island.Blocks:GetChildren()) do
+            if island.Blocks[Config.Farming.autoCropSelection] then
+                if v.Name == Config.Farming.autoCropSelection then
+                        table.insert(currentCrop, v)
+                        table.insert(currentCropPos, v.CFrame)
+                    --    print(#args[2],' ', #currentCrop)
 
-				table.insert(args[2], v)
-				--for place, value in pairs(currentCrop) do
-					--args[2][place] = value
-				--end
-				print(#args[2],' ', #currentCrop)
+                    -- cropLoopCount for how many time for loop is run for later checking
+                    cropLoopCount = cropLoopCount + 1
+                end 
 			end
         end
-		game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.SwingSickle:InvokeServer(unpack(args))
-		table.clear(currentCrop)
-		table.clear(args[2])
+
+        
+        -- placing into args[2] currentCrop values
+        task.spawn(function()
+            for place, value in pairs(currentCrop) do
+                table.insert(args[2], value)
+                --print(#args[2],' ', #currentCrop)
+            end
+        end)
+
+        -- checks if cropLoopCount var is equal to length of args variable to avoid remote spamming
+        --print(cropLoopCount)
+        if cropLoopCount == #args[2] then
+            game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.SwingSickle:InvokeServer(unpack(args))
+            table.clear(currentCrop)
+            table.clear(args[2])
+            cropLoopCount = 0
+        end
+        
+        repeat task.wait() until Config.Farming.autoCropping
     end
 end)
 
-local currentCropPos = {}
+
 autoCrop:addToggle("Auto Replant", nil, function(v)
     Config.Farming.autoPlanting = v
 
     while Config.Farming.autoPlanting do
-      for i,v in pairs(currentCrop) do
-        local vec = v.Position
-		table.insert(currentCropPos, CFrame.new(vec) * v.CFrame.Angles)
-        print(currentCropPos[i])
-	  end
+        if Config.Farming.autoPlanting == false then break end
 
-      repeat task.wait() until Config.Farming.autoPlanting
+        for i,v in pairs(currentCropPos) do
+            if Config.Farming.autoPlanting == false then continue end
+            root.CFrame = v
+            wait(0.1)
+            local args = {
+                [1] = {
+                    ["upperBlock"] = false,
+                    ["cframe"] = v,
+                    ["blockType"] = Config.Farming.autoCropSelection
+                }
+            }
+            game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_BLOCK_PLACE_REQUEST:InvokeServer(unpack(args))
+            replantCount = replantCount + 1
+            
+        end
+        
+       -- print(replantCount)
+        if replantCount == cropLoopCount then
+            table.clear(currentCropPos)
+            replantCount = 0
+        end
+        repeat task.wait() until Config.Farming.autoPlanting
     end
 end)
 
@@ -236,19 +311,27 @@ autoCrop:addToggle("Auto Sell", nil, function(v)
 						if Config.Farming.autoCropSelection == 'wheat' then
 							args[1]["merchant"] = "cropSell"
 							args[1]['offerId'] = 1
+
 						elseif Config.Farming.autoCropSelection == 'tomato' then
 							args[1]["merchant"] = "cropSell"
 							args[1]['offerId'] = 5
+
 						elseif Config.Farming.autoCropSelection == 'potato' then
 							args[1]["merchant"] = "cropSell"
 							args[1]['offerId'] = 4
+
 						elseif Config.Farming.autoCropSelection == 'horseradish' then
 							args[1]["merchant"] = "adventurer"
 							args[1]['offerId'] = 2
+
 						elseif Config.Farming.autoCropSelection == 'pumpkin' then
 							UI:Notify('Notice', 'not sure but the autumn shop is where pumkins are at, so if it doesn\' work don\'t blame me')
 
+                        elseif Config.Farming.autoCropSelection == 'carrot' then
+                            args[1]["merchant"] = "cropSell"
+                            args[1]["offerId"] = 2 
 						end
+
 						game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_MERCHANT_ORDER_REQUEST:InvokeServer(unpack(args))
 					end
 				end
@@ -393,12 +476,150 @@ islandTeleports:addDropdown("Teleports", ScriptList.islandTpList, function(v)
     end
 end)
 
+-- // Machinery page
+
+local machinery = UI:addPage("Machinery", 9157181391)
+
+local machinerySec = machinery:addSection("Machinery")
+
+machinerySec:addDropdown("Metal", ScriptList.autoMachineryItemList, function(v)
+    Config.Machinery.autoMachineryItemSelection = v
+    print(Config.Machinery.autoMachineryItemSelection)
+end)
+
+machinerySec:addDropdown("Furnace", ScriptList.autoMachineryFurnaceList, function(v)
+    Config.Machinery.autoMachineryFurnaceSelection = v
+    print(Config.Machinery.autoMachineryFurnaceSelection)
+end)
+
+machinerySec:addToggle("Auto Coal Insert", nil, function(v)
+    Config.Machinery.autoMachineryCoalInserting = v
+
+    while Config.Machinery.autoMachineryCoalInserting do
+        for i,v in pairs(island.Blocks:GetChildren()) do
+            if v.Name == Config.Machinery.autoMachineryFurnaceSelection then
+                print('inserting coal....')
+                local args = {
+                    [1] = {
+                        ["amount"] = 1,
+                        ["block"] = v,
+                        ["toolName"] = "coal"
+                    }
+                }
+
+                game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST:InvokeServer(unpack(args))
+            end
+        end
+
+        repeat task.wait() until Config.Machinery.autoMachineryCoalInserting
+    end
+end)
+
+machinerySec:addToggle("Auto Metal Insert", nil, function(v)
+    Config.Machinery.autoMachineryMetalInserting = v
+
+    while Config.Machinery.autoMachineryMetalInserting do
+            for i,v in pairs(island.Blocks:GetChildren()) do
+                if v.Name == Config.Machinery.autoMachineryFurnaceSelection then
+                    --print('inserting'..Config.Machinery.autoMachineryItemSelection..'...')
+                    local args = {
+                        [1] = {
+                            ["amount"] = 1,
+                            ["block"] = v,
+                            ["toolName"] = Config.Machinery.autoMachineryItemSelection..'Ore'
+                        }
+                    }
+                    
+                    task.wait(0.01)
+                    game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_BLOCK_WORKER_DEPOSIT_TOOL_REQUEST:InvokeServer(unpack(args))
+                end
+            end
+
+        repeat task.wait() until Config.Machinery.autoMachineryMetalInserting
+    end
+end)
+
+machinerySec:addToggle("Auto Pickup", nil, function(v)
+    Config.Machinery.autoPicking = v
+
+    local furnace = nil
+    while Config.Machinery.autoPicking do
+        task.spawn(function()
+            for i,v in pairs(island.Blocks:GetChildren()) do
+                    if v.Name == Config.Machinery.autoMachineryFurnaceSelection then
+                        furnace = v
+                    end
+            end
+        end)
+
+       -- TODO: fix below
+        for i,v in pairs(furnace.WorkerContents:GetChildren()) do
+            if v.Name == Config.Machinery.autoMachineryItemSelection then
+                local args = {
+                    [1] = {
+                        ["tool"] = v
+                    }
+                }
+
+                game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_TOOL_PICKUP_REQUEST:InvokeServer(unpack(args))
+            end
+        end
+
+        repeat task.wait() until Config.Machinery.autoPicking
+    end
+end)
 
 -- // Misc
 local misc = UI:addPage("Misc", 5012544944)
 
 local miscSec = misc:addSection("Misc")
 
+miscSec:addSlider("Plow/Unplow Distance", 10, 0, 15, function(v)
+    Config.Misc.plowDistance = v
+    print(Config.Misc.plowDistance)
+end)
+miscSec:addToggle("Auto Plow", nil, function(v)
+    Config.Misc.autoPlowing = v
+
+    while Config.Misc.autoPlowing do
+        for i,v in pairs(island.Blocks:GetChildren()) do
+            if v.Name == 'grass' then
+                if (root.Position - v.Position).magnitude < Config.Misc.plowDistance then
+                    local args = {
+                        [1] = {
+                            ["block"] = v
+                        }
+                    }
+
+                    game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_PLOW_BLOCK_REQUEST:InvokeServer(unpack(args))
+                end
+            end
+        end
+
+        repeat task.wait() until Config.Misc.autoPlowing
+    end
+end)
+miscSec:addToggle("Auto Unplow", nil, function(v)
+    Config.Misc.autoUnPlowing = v
+
+    while Config.Misc.autoUnPlowing do
+        for i,v in pairs(island.Blocks:GetChildren()) do
+            if v.Name == 'soil' then
+                if (root.Position - v.Position).magnitude < Config.Misc.plowDistance then
+                    local args = {
+                        [1] = {
+                            ["block"] = v
+                        }
+                    }
+
+                    game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_PLOW_BLOCK_REQUEST:InvokeServer(unpack(args))
+                end
+            end
+        end
+
+        repeat task.wait() until Config.Misc.autoUnPlowing
+    end
+end)
 miscSec:addToggle("Clear rocks and tallGrass", nil, function(v)
 	getgenv().clearingClutter = v
 
@@ -453,6 +674,7 @@ miscSec:addDropdown("Season Changer",{'summer','winter','fall','spring'} ,functi
 end)
 
 miscSec:addButton("Lag Remover", function()
+    settings().Rendering.QualityLevel = 'Level01'
     workspace:FindFirstChildOfClass('Terrain').WaterWaveSize = 0
     workspace:FindFirstChildOfClass('Terrain').WaterWaveSpeed = 0
     workspace:FindFirstChildOfClass('Terrain').WaterReflectance = 0
@@ -465,7 +687,9 @@ miscSec:addButton("Lag Remover", function()
         if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
             v.Material = "Plastic"
             v.Reflectance = 0
-        elseif v:IsA("Decal") then
+            v.BrickColor = BrickColor.new(155, 155, 155)
+        elseif v:IsA("Decal") or v:IsA('Texture') then
+            v:Destroy()
             v.Transparency = 1
         elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
             v.Lifetime = NumberRange.new(0)
@@ -477,6 +701,7 @@ miscSec:addButton("Lag Remover", function()
     for i,v in pairs(game:GetService("Lighting"):GetDescendants()) do
         if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
             v.Enabled = false
+            v:Destroy()
         end
     end
     workspace.DescendantAdded:Connect(function(child)
@@ -506,6 +731,7 @@ for theme, color in pairs(Config.themes) do
         UI:setTheme(theme, Config.themes[theme])
     end)
 end
+local scriptSettings = settings:addSection("Settings For Script")
 
 local generalSettings = settings:addSection("General")
 generalSettings:addKeybind("Toggle Keybind", Enum.KeyCode[Config.KeyBinds.ToggleBind], function()
@@ -559,7 +785,7 @@ end, function()
 end)
 section2:addColorPicker("ColorPicker", Color3.fromRGB(50, 50, 50))
 section2:addColorPicker("ColorPicker2")
-
+                        default  min   max
 section2:addSlider("Slider", 0, -100, 100, function(v) -- // slider
     print("Dragged", v)
 end)
