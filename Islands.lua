@@ -543,22 +543,32 @@ machinerySec:addToggle("Auto Pickup", nil, function(v)
     Config.Machinery.autoPicking = v
 
     local furnace = nil
-    while Config.Machinery.autoPicking do
+    while Config.Machinery.autoPicking do task.wait()
+        print("while loop starting")
             for _,v in pairs(island.Blocks:GetChildren()) do
-                    if v.Name == Config.Machinery.autoMachineryFurnaceSelection then
-                        for _,k in pairs(v.WorkerContents:GetChildren()) do
+                if v.Name == Config.Machinery.autoMachineryFurnaceSelection then
+                    print("1st for loop found furnace")
+                    for _,k in pairs(v.WorkerContents:GetChildren()) do
+                        if k == nil then
+                            continue
+                        elseif k.Name == Config.Machinery.autoMachineryItemSelection then
+                            print("inner for loop found item")
                             local args = {
                                 [1] = {
                                     ["tool"] = k
                                 }
                             }
-        
+            
                             game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_TOOL_PICKUP_REQUEST:InvokeServer(unpack(args))
+                            print("event executed")
+                        else
+                            print("else statement found")
+                            continue
                         end
-                        
                     end
+                end
             end
-        repeat task.wait() until Config.Machinery.autoPicking
+        
     end
 end)
 
