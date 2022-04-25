@@ -19,8 +19,9 @@ do
 
         -- Properties:
 
-        ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+        ScreenGui.Parent = game.CoreGui
         ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        ScreenGui.ResetOnSpawn = false
 
         Frame.Parent = ScreenGui
         Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -54,8 +55,12 @@ do
         TweenService:Create(Frame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.9, 0, 0.891, 0)}):Play()
 
         task.wait(duration)
+
+        TweenService:Create(Frame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0.891, 0)}):Play()
+        task.wait(0.2)
         ScreenGui:Destroy()
     end
 end
 
 return NotifyLib
+
