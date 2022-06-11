@@ -1,5 +1,6 @@
 --Game: a one piece game
 
+-- lost motivation
 
 -- docs : https://detourious.gitbook.io/project-finity/docs
 local lp = game:GetService("Players").LocalPlayer
@@ -101,7 +102,7 @@ https://raw.githubusercontent.com/bloodball/UI-Librarys/main/Finity%20UI%20Lib
 LoadConfig()
 local Finity = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kranzyo/UI-Libraries/main/Finity%20Ui.lua"))()
 local FinityWindow = Finity.new(true, "A one piece game script by Kranz#0737", UDim2.new(0, 500, 0, 200)) -- name of thing
-FinityWindow.ChangeToggleKey(Enum.KeyCode.BackSlash)
+FinityWindow.ChangeToggleKey(Enum.KeyCode.Semicolon)
 
 -- // Credits and stuff
 local CreditsCategory = FinityWindow:Category("Credits and stuff")
@@ -169,12 +170,13 @@ first:Cheat("Checkbox", "auto tp", function(s)
     while Config.quests.autoTping do task.wait()
         for _,v in pairs(game:GetService("Workspace").Entities:GetChildren()) do
             if v.Name == Config.quests.selected then
+                
                 repeat task.wait()
                     local speed = 100
                     local distance = (v.PrimaryPart.Position - root.Position).magnitude
                     local time = GetTime(distance, speed)
-                    ts:Create(root, TweenInfo.new(time), {CFrame = v.PrimaryPart.CFrame + Vector3.new(0, 0, 5)}):Play()
-                until v.PrimaryPart == nil or Config.quests.autoTping == false
+                    ts:Create(root, TweenInfo.new(time), {CFrame = v.PrimaryPart.CFrame + Vector3.new(0, 10, 5)}):Play()
+                until v.PrimaryPart == nil or v:FindFirstChildOfClass("Humanoid").Health < 1 or Config.quests.autoTping == false
             end
         end
     end
