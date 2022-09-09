@@ -41,8 +41,9 @@ getgenv().Config = {
     farmMethod = "Meteor Farm",
     OnFarm = false,
     GodMode = false,
-    dioOn = false,
+    bossOn = false,
     KeyBind = "Comma",
+    click = false,
     e = false,
     r = false,
     t = false,
@@ -210,23 +211,37 @@ function(v)
     end
 end)
 
--- // dio farm
-other:Cheat("Checkbox", "Dio Farm", 
-function(v)
-    Config.dioOn = v
 
-    while Config.dioOn do
+-- // dio farm
+other:Cheat("Checkbox", "Boa Farm", 
+function(v)
+    Config.bossOn = v
+    local boat = game:GetService("Workspace").NPCS["Mysterious Boat"]
+
+    root.CFrame = CFrame.new(10921.3223, 934.140991, 15258.9893, 0.681162894, 1.71684289e-09, -0.732131898, -2.48914702e-08, 1, -2.08136033e-08, 0.732131898, 3.24012923e-08, 0.681162894)
+
+    while Config.bossOn do
         if char then
-            if game:GetService("Workspace").Living.Dio then
-                root.CFrame = game:GetService("Workspace").Living.Dio.HumanoidRootPart.CFrame + Vector3.new(5, 0, 0)
+            if game:GetService("Workspace").Living["Boa H"] then
+                root.CFrame = game:GetService("Workspace").Living["Boa H"].HumanoidRootPart.CFrame + Vector3.new(5, 0, 0)
             end
         end
 
-        repeat task.wait() until Config.dioOn
+        repeat task.wait() until Config.bossOn
     end
 end)
-other:Cheat("Label", " ")
 
+other:Cheat("Label", "", "")
+
+other:Cheat("Checkbox", "Auto Click", function(v)
+    Config.click = v
+
+    while Config.click do
+        if char then
+            game:GetService("ReplicatedStorage").Remotes.InputFunc:InvokeServer("END-LMB")
+        end
+    end
+end)
 
 other:Cheat("Checkbox", "Auto Key E", function(v)
     Config.e = v
