@@ -144,7 +144,6 @@ local Window = Bracket:Window({Name = "SELL POOP TYCOON Script by Kranz | Fixed 
     
                             fireproximityprompt(v.NPC.HumanoidRootPart.ProximityPrompt)
                         end
-                        task.wait(1)
                     end
                 end
 
