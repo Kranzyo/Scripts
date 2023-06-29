@@ -135,7 +135,8 @@ local Window = Bracket:Window({Name = "SELL POOP TYCOON Script by Kranz",Enabled
             AutoKickPoopersToggle.Callback = function(Bool)
                 Config.toggles.autoKickPoopers = Bool
 
-                task.spawn(function()
+                while Config.toggles.autoKickPoopers do
+                    task.wait()
                     for i,v in pairs(Config.playerTycoon.Items:GetChildren()) do
                         if string.find(v.Name, "Pooper") then
                             root.CFrame = v.NPC.HumanoidRootPart.CFrame
@@ -145,7 +146,7 @@ local Window = Bracket:Window({Name = "SELL POOP TYCOON Script by Kranz",Enabled
                         end
                         task.wait(1)
                     end
-                end)
+                end
 
             end
 
