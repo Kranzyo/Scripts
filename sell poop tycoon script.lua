@@ -47,7 +47,7 @@ local Bracket = loadstring(game:HttpGet("https://raw.githubusercontent.com/AlexR
 
 
 -- see source code for more hidden things i forgot to add in this example
-local Window = Bracket:Window({Name = "SELL POOP TYCOON Script by Kranz | Fixed auto kick",Enabled = true,Color = Color3.new(1,0.5,0.25),Size = UDim2.new(0,496,0,496),Position = UDim2.new(0.5,-248,0.5,-248)}) do
+local Window = Bracket:Window({Name = "SELL POOP TYCOON Script by Kranz",Enabled = true,Color = Color3.new(1,0.5,0.25),Size = UDim2.new(0,496,0,496),Position = UDim2.new(0.5,-248,0.5,-248)}) do
     --Window.Name = "Name"
     --Window.Size = UDim2.new(0,496,0,496)
     --Window.Position = UDim2.new(0.5,-248,0.5,-248)
@@ -114,19 +114,6 @@ local Window = Bracket:Window({Name = "SELL POOP TYCOON Script by Kranz | Fixed 
 
             AutoCollectPoopToggle.Callback = function(Bool) 
                 Config.toggles.autoCollectPoop = Bool
-                
-                while Config.toggles.autoCollectPoop do
-                    root.CFrame = Config.playerTycoon.Belts.Belt1.Collector.Prox.CFrame
-                    task.wait(1)
-                    fireproximityprompt(Config.playerTycoon.Belts.Belt1.Collector.Prox.ProximityPrompt, 1, true)
-                    task.wait(1)
-                    
-                    root.CFrame = Config.playerTycoon.StaticItems.Storage1.CFrame
-                    task.wait(1)
-                    fireproximityprompt(Config.playerTycoon.StaticItems.Storage1.ProximityPrompt, 1, false)
-
-                    task.wait(3)
-                end
             end
 
             local AutoKickPoopersToggle = StuffSection:Toggle({Name = "auto kick friends", Flag = "Toggle", Value = false})
@@ -134,19 +121,6 @@ local Window = Bracket:Window({Name = "SELL POOP TYCOON Script by Kranz | Fixed 
 
             AutoKickPoopersToggle.Callback = function(Bool)
                 Config.toggles.autoKickPoopers = Bool
-
-                while Config.toggles.autoKickPoopers do
-                    task.wait()
-                    for i,v in pairs(Config.playerTycoon.Items:GetChildren()) do
-                        if string.find(v.Name, "Pooper") then
-                            root.CFrame = v.NPC.HumanoidRootPart.CFrame
-                            task.wait(1)
-    
-                            fireproximityprompt(v.NPC.HumanoidRootPart.ProximityPrompt)
-                        end
-                    end
-                end
-
             end
 
             local PoopToCollectLabel = StuffSection:Label({Text = "Poop: "})
@@ -159,6 +133,34 @@ local Window = Bracket:Window({Name = "SELL POOP TYCOON Script by Kranz | Fixed 
                 end
             end)
 
+            -- autos
+            task.spawn(function()
+                while true do
+                    task.wait()
+                    if Config.toggles.autoCollectPoop then
+                        root.CFrame = Config.playerTycoon.Belts.Belt1.Collector.Prox.CFrame
+                        task.wait(1)
+                        fireproximityprompt(Config.playerTycoon.Belts.Belt1.Collector.Prox.ProximityPrompt, 1, true)
+                        task.wait(1)
+                        
+                        root.CFrame = Config.playerTycoon.StaticItems.Storage1.CFrame
+                        task.wait(1)
+                        fireproximityprompt(Config.playerTycoon.StaticItems.Storage1.ProximityPrompt, 1, false)
+                        task.wait(1)
+                    end
+
+                    if Config.toggles.autoKickPoopers then
+                        for i,v in pairs(Config.playerTycoon.Items:GetChildren()) do
+                            if string.find(v.Name, "Pooper") then
+                                root.CFrame = v.NPC.HumanoidRootPart.CFrame
+                                task.wait(1)
+        
+                                fireproximityprompt(v.NPC.HumanoidRootPart.ProximityPrompt)
+                            end
+                        end
+                    end
+                end
+            end)
         end
     end
 
